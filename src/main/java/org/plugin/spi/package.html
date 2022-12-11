@@ -1,0 +1,66 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head>      
+<title></title>
+
+</head>
+  
+<body>  
+<p>Generic interfaces that may be implemented by service provider interfaces.</p> 
+
+<p>Both the {@link org.plugin.spi.Codec} and {@link org.plugin.spi.ContentConverter} interfaces
+represent possible Service Provider interfaces that may be implemented to convert data from
+one format to another. </p>
+
+<h2>Error management</h2>
+
+<p>Service Providers should throw the {@link org.plugin.ServiceProviderException} exception in case
+of error to be consistent.</p>
+
+<p>The following sections presents different use cases and how they can be implemented with
+the service providers.</p>
+
+<h2>Configurable service providers</h2>
+
+<p>When service providers need to be configured, the {@link org.plugin.spi.ServiceConfiguration} interface
+should be implemented, as it will permit to have a generic way to present configuration information
+to the user in a user interface. </p>
+
+<h2>Service provider information</h2>
+
+<p>Service providers should implement the {@link org.plugin.spi.ServiceMetadata} interface if they will
+be managed and loaded dynamically, as it permits to return information on the service provider implementation. 
+The returned information may be retrieved by the <code>MANIFEST.MF file</code> of the service provider JAR file.</p>
+
+<h2>Initialization / Finalization</h2>
+
+<p>Service providers that require initialization and finazilation code and which are loaded dynamically should
+implement the {@link org.plugin.spi.RegisterableService} interface. Higher-level callers to the service
+providers should also call the methods in that interface if available once before usage of the service and
+before shutdown of the service.</p>
+
+
+<h2>Service Provider activation / deactivation (Java SE/Android only)</h2>
+
+<p>In the case where service providers may be activated or deactivated at runtime, the following, refer
+to the {@link org.plugin} package.</p>
+
+<h2>Input / Output types</h2>
+
+<p>Service providers that have generic {@link java.lang.Object} inputs and outputs should implement the
+{@link org.plugin.spi.InputOutputTypeProvider} interface to give information on the class information
+that is accepted as input and outputs.</p>
+
+<h2>Format types</h2>
+
+<p>Service providers that can convert from one format to another, such as video codecs should implement the 
+{@link org.plugin.spi.FormatProvider} interface to be able to return the types of supported formats, and
+to optionally configure the format to be used when doing conversion.</p>
+
+
+  
+<p></p>
+</body>
+</html>

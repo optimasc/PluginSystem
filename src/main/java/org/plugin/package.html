@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" 
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">  
+<head>      
+<title></title>
+
+
+</head>
+  
+<body>  
+<p>Utilities used for managing service providers.</p> 
+
+<p>Service Providers represent services that implement pre-defined interfaces, that may eventually be 
+loaded at runtime as plugins instead of being compiled in the project. </p>
+
+<p>As defined with the {@link java.util.ServiceLoader} class in the Java SDK a service provider can 
+be declared when a services subdirectory is placed within the META-INF  directory that is present 
+in every JAR file.  This directory should contain a file for each service provider interface that 
+has one or more implementation classes present in the JAR file.</p> 
+
+<p>If the JAR file contained a class named <code>org.plugin.ServiceImpl</code> which implements the 
+<code>org.plugin.spi.Codec</code> interface, the JAR file would contain a file named:
+<code>META-INF/services/org.plugin.spi.Codec</code>  containing the line: 
+ <code>org.plugin.ServiceImpl</code></p>
+
+<p>The following sections presents different use cases and how they can be implemented with
+the service providers.</p>
+
+<h2>Categories</h2>
+
+<p>When multiple service provider interfaces are present in a single application, each instance
+of a service provider interface should be placed in a category for easier retrieval. Both 
+{@link org.plugin.ServiceProviderUtilities.ServiceList} and {@link org.plugin.ServiceRegistry} classes
+permitting to associated service providers in a specific category</p>
+
+
+<h2>Service Provider loading</h2>
+
+<p>Several methods are available to load the service providers dynamically:</p>
+
+<ul>
+ <li>Directly use the java SDK {@link java.util.ServiceLoader} class to load the service providers. By default this will search
+ service providers from the  <var>CLASSPATH</var></li>
+ <li>Use the internal <code>ServiceRegistry.lookupProviders()</code> method to load the service providers. By default this will search
+ service providers from the  <var>CLASSPATH</var></li>
+ <li>Use the internal <code>ServiceProviderUtilities.loadServiceProviders()</code> method to load the service providers. By default,
+ this will search in the plugins directory from the root installation path of the main JAR file. Assuming that the main JAR
+ file is located in the <code>bin</code> directory, then the search will be made <code>../plugins</code> directory.</li>
+</ul>
+
+<h2>Service Provider activation / deactivation</h2>
+
+<p>In the case where service providers may be activated or deactivated at runtime, the following
+classes can be useful:</p>
+
+<ul> 
+ <li>{@link org.plugin.ServiceProviderUtilities.ServiceList} may be used to represent all available services. </li>
+ <li>{@link org.plugin.ServiceRegistry} may be used to represent only services that are enabled. </li>
+</ul>
+
+<h2>Accessing the application wide service provider manager</h2>
+
+<p>The {@link org.plugin.ServiceManager} may be used as a central location for global plugin management, as it is a singleton instance.</p> 
+
+
+
+<h2>Loading / Saving service provider list</h2>
+
+<p>The {@link org.plugin.ServiceProviderUtilities#loadServiceList} and 
+ {@link org.plugin.ServiceProviderUtilities#saveServiceList} methods may be used to save and load the
+ state of the service providers to and from disk.</p>
+
+
+</body>
+</html>
