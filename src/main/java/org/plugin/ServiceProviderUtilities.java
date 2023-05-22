@@ -38,18 +38,7 @@ import java.util.Vector;
 import org.plugin.spi.ServiceMetadata;
 
 /**
- * Useful utilities associated with service providers. 
- * 
- * For the simple objects, the following information shall be used:
- * <ul>
- * <li>The plugin ID will be equal to the package name.</li>
- * <li>The plugin version metadata shall be retrieved from the MANIFEST
- * Implementation-Version element</li>
- * <li>The plugin title metadata shall be retrieved from the MANIFEST
- * Implementation-Title element</li>
- * <li>The plugin vendor metadata shall be retrieved from the MANIFEST
- * Implementation-Vendor element</li>
- * </ul>
+ * Useful utilities associated with service provider plugins.
  * 
  * @author Carl Eric Codere
  * 
@@ -58,9 +47,8 @@ public class ServiceProviderUtilities
 {
   /**
    * Returns the plugin ID of this plugin. The value returned depends on the
-   * instance class of the service. For those derived from Plugin, it gets the
-   * ID by calling getPluginID(), otherwise the plugin id is equal to the
-   * package name.
+   * instance class of the service. This is a unique identifier for
+   * this plugin.
    * 
    * @param pluginObject
    * @return The associated plugin ID.
@@ -70,6 +58,14 @@ public class ServiceProviderUtilities
     return pluginObject.getClass().getName();
   }
 
+  /** Returns the plugin version. If the plugin implements the
+   * {@link ServiceMetadata} class it calls the method to retrieve
+   * the implementation version, otherwise it uses the
+   * {@link java.lang.Package} to retrieve the implementation version.
+   *
+   * @param pluginObject
+   * @return The implementation version as a string.
+   */
   public static String getPluginVersion(Object pluginObject)
   {
     if (pluginObject instanceof ServiceMetadata)
@@ -79,6 +75,16 @@ public class ServiceProviderUtilities
     return pluginObject.getClass().getPackage().getImplementationVersion();
   }
 
+  /** Returns the plugin title. The title usually represents a human
+   *  readable short description of the plugin.
+   *
+   *  If the plugin implements the {@link ServiceMetadata} class it calls the
+   *  method to retrieve the implementation title, otherwise it uses the
+   * {@link java.lang.Package} to retrieve the implementation title.
+   *
+   * @param pluginObject
+   * @return The implementation title as a string.
+   */
   public static String getPluginTitle(Object pluginObject)
   {
     if (pluginObject instanceof ServiceMetadata)
@@ -89,6 +95,15 @@ public class ServiceProviderUtilities
     return pkg.getImplementationTitle();
   }
 
+  /** Returns the name of the plugin creator.
+   *
+   * If the plugin implements the {@link ServiceMetadata} class it calls the
+   * method to retrieve the implementation vendor, otherwise it uses the
+   * {@link java.lang.Package} to retrieve the implementation vendor.
+   *
+   * @param pluginObject
+   * @return The implementation creator as a string.
+   */
   public static String getPluginVendor(Object pluginObject)
   {
     if (pluginObject instanceof ServiceMetadata)
@@ -375,17 +390,17 @@ public class ServiceProviderUtilities
 
   /**
    * Returns a list of all service providers, both searched through the class
-   * loader implementing the specified category, as well as those which are
+   * loader implementing the specified categories, as well as those which are
    * manually registered.
    * 
    * @param serviceRegistry
-   *          Service registry that will be used to lookup more service
-   *          providers.
+   *          [in] Service registry that will be used to lookup loaded dynamically
+   *          loaded service providers.
    * @param additionalProviders
-   *          Return a list of additional service providers specifically defined
-   *          by the developer.
+   *          [in] A list of additional service providers specifically defined
+   *          by the developer to be returned.
    * @param categories
-   *          The categories to look for for dynamically loaded service
+   *          [in] The categories to look for for dynamically loaded service
    *          providers.
    * @return A list of all service providers.
    */
@@ -419,14 +434,14 @@ public class ServiceProviderUtilities
   }
 
   /**
-   * Utility function for ServiceConfiguration to validate values against
+   * Utility function for {@link org.plugin.spi.ServiceConfiguration} to validate values against
    * datatypes and converts to the correct datatype if necessary. Throws an
    * exception if the value is not of the correct format.
    * 
    * @param dataType
-   *          The expected datatype.
+   *          [in] The expected datatype.
    * @param value
-   *          The value
+   *          [in] The actual value
    * @return The value converted to the expected datatype.
    * @throws IllegalArgumentException
    *           In case the value cannot be converted to the expected datatype or
@@ -547,25 +562,31 @@ public class ServiceProviderUtilities
    * <code>list</code> parameter at the end.</li>
    * </ul>
    * 
-   * The format of the service configuration on entry is a simple text file, one
-   * provider per line, where the key is the class name of the provider,
-   * separated by a key-value separator "=" followed by its value which is its
-   * enabled state, stored as a lower-case {@link java.lang.Boolean} string.
-   * <p>
+   * The format of the service configuration file is a simple text file.
+   * <ul>
+   *   <li>one service per line</li>
+   *   <li>each service is composed of the plugin ID of the provider separated
+   *     by a key-value separator "=" followed by its service activation state.</li>
+   *   <li>The service activation state is stored as a lower-case
+   *    {@link java.lang.Boolean} string</li>
+   *   <li>Comment lines are denoted by the number sign (#) or the exclamation mark (!)
+   *     as the first non blank character</li>
+   *   <li>The name of the file is the actual category name.</li>
+   * </ul>
    * 
    * @param directory
-   *          The location where the configuration data will be loaded from.
+   *          [in] The directory where the configuration data will be loaded from.
    * @param list
-   *          The populated service list of all available services discovered,
-   *          ordered correctly.
+   *          [in,out] The populated service list of all available services discovered,
+   *          ordered from the order on disk.
    * @param registry
-   *          The populated registry of all services that were activated in the
+   *          [in,out] The populated registry of all services that were activated in the
    *          configuration file.
    * @param additionalProviders
-   *          additional providers of this category to add when listing
+   *          [in] additional providers of this category to add when listing
    *          available services, this can be an empty array, if there are none.
    * @param category
-   *          The category of this service.
+   *          [in] The categories of the services.
    */
   public static void loadServiceList(File directory, ServiceList list, ServiceRegistry registry,
       Object[] additionalProviders, Class category)
@@ -594,6 +615,14 @@ public class ServiceProviderUtilities
       /* Read plugin list configuration file */
       while ((s = fileReader.readLine()) != null)
       {
+        String s1 = s.trim();
+        /* Supported comment charaters as first non-blacnk character in the
+         * properties file 
+         */
+        if (s1.startsWith("!") || s1.startsWith("#"))
+        {
+            continue;
+        }
         String[] tokens = s.split("=");
         /* Get the class name and enabled state */
         config.add(tokens);
@@ -650,7 +679,19 @@ public class ServiceProviderUtilities
 
   }
 
-  /** Saves the service list to a file, saving it in registry order. */
+  /** Saves the service list to a file, saving it in registry order.
+   *
+   * @param directory
+   *          [in] The directory where the configuration data will be saved to.
+   * @param list
+   *          [in] The list of services.
+   * @param registry
+   *          [in] The list of activated services from the list of services.
+   * @param category
+   *          [in] The categories of the services.
+   *
+   * @see #loadServiceList
+   */
   public static void saveServiceList(File directory, ServiceList list, ServiceRegistry registry,
       Class category)
   {
