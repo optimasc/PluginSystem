@@ -133,6 +133,7 @@
         <configuration>
          <!-- Output location of api documentation -->
          <outputDirectory>${project.build.directory}/apidocs</outputDirectory>
+		 <failOnError>false</failOnError>
         </configuration>
        <executions>
           <execution>
