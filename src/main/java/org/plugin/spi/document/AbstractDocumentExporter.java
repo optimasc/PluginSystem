@@ -14,8 +14,10 @@
 */
 package org.plugin.spi.document;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 
 import org.plugin.ServiceProviderException;
@@ -33,14 +35,14 @@ import org.w3c.dom.Document;
  * 
  * It supports the following input types:
  * <ul>
- * <li>{@link org.w3c.dom.Document}</li>
+ * <li>Array of {@link org.w3c.dom.Document}</li>
  * </ul>
  * The input format must be a valid XHTML Document.
  * 
  * 
  * It supports the following output types:
  * <ul>
- * <li>{@link java.io.OutputStream}</li>
+ * <li>{@link java.io.File} pointing to a directory</li>
  * </ul>
  * 
  * 
@@ -52,9 +54,9 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
   /** Base URL reference of the document, used to resolve relative references */
   URL baseURL;
 
-  static final Class[] inputTypes = { org.w3c.dom.Document.class };
+  static final Class[] inputTypes = { org.w3c.dom.Document[].class };
 
-  static final Class[] outputTypes = { java.io.OutputStream.class };
+  static final Class[] outputTypes = { java.io.File.class };
 
   public AbstractDocumentExporter()
   {
@@ -93,12 +95,12 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
       throws ServiceProviderException
   {
     /* Check if supported format */
-    if ((input instanceof Document) == false)
+    if ((input instanceof Document[]) == false)
     {
       throw new ServiceProviderException(ServiceProviderException.BAD_REQUEST,
           "Unsupported input type " + input.getClass().getName());
     }
-    if ((output instanceof OutputStream) == false)
+    if ((output instanceof File) == false)
     {
       throw new ServiceProviderException(ServiceProviderException.BAD_REQUEST,
           "Unsupported output type " + output.getClass().getName());

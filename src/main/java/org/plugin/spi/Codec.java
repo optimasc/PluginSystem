@@ -25,10 +25,10 @@ import org.plugin.ServiceProviderException;
 public interface Codec extends FormatProvider, InputOutputTypeProvider
 {
   /** Given an input, this method shall convert the input and return
-   *  it in output. 
+   *  the converted input in output. 
    * 
-   * @param input The input that needs processing and conversion
-   * @param output The output that shall receive the processed and/or converted data.
+   * @param input [in] The input that needs processing and conversion
+   * @param output [out] The output that shall receive the processed and/or converted data.
    * @throws ServiceProviderException if input is not an instance of 
    *   a supported instance type.
    * @throws ServiceProviderException if output is not an instance of 
