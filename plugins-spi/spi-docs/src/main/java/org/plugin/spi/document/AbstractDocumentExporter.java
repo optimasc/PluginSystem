@@ -26,26 +26,26 @@ import org.w3c.dom.Document;
 /**
  * Base helper class used for document exporters. The document exporter class
  * supports the following output formats:
- * 
+ *
  * <ul>
  * <li>{@link #OUTPUT_ARTICLE}</li>
  * <li>{@link #OUTPUT_REPORT}</li>
  * <li>{@link #OUTPUT_BOOK}</li>
  * </ul>
- * 
+ *
  * It supports the following input types:
  * <ul>
  * <li>Array of {@link org.w3c.dom.Document}</li>
  * </ul>
  * The input format must be a valid XHTML Document.
- * 
- * 
+ *
+ *
  * It supports the following output types:
  * <ul>
  * <li>{@link java.io.File} pointing to a directory</li>
  * </ul>
- * 
- * 
+ *
+ *
  */
 public abstract class AbstractDocumentExporter implements DocumentExporter
 {
@@ -68,10 +68,10 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
    * Returns an array of Class objects indicating what types of objects that may
    * be returned from the process method. This implementation returns an array
    * of 1 item with a content equal to <code>java.io.OutputStream</code>.
-   * 
+   *
    * @return a non-null array of Class objects of length at least 1.
    */
-  @Override
+
   public Class[] getOutputTypes() throws ServiceProviderException
   {
     return outputTypes;
@@ -81,16 +81,16 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
    * Returns an array of Class objects indicating what types of objects may be
    * used as input to the process method. This implementation returns an array
    * of 1 item with a content equal to <code>org.w3c.dom.Document</code>.
-   * 
+   *
    * @return a non-null array of Class objects of length at least 1.
    */
-  @Override
+
   public Class[] getInputTypes() throws ServiceProviderException
   {
     return inputTypes;
   }
 
-  @Override
+
   public void process(Object input, Object output)
       throws ServiceProviderException
   {
@@ -112,9 +112,9 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
    * Return the supported parameters that can be configured for this service
    * provider. It currently supports the {@link #PROPERTY_DOCUMENT_STYLE}
    * configuration parameter.
-   * 
+   *
    */
-  @Override
+
   public String[] getParameterNames()
   {
     return new String[] { PROPERTY_DOCUMENT_STYLE, PROPERTY_BASE_URL };
@@ -124,15 +124,15 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
    * Sets the specified configuration parameter for this service provider. It
    * currently supports the {@link #PROPERTY_DOCUMENT_STYLE} configuration
    * parameter.
-   * 
+   *
    * @param name
    *          The configuration parameter to set, should be
    *          {@link #PROPERTY_DOCUMENT_STYLE}.
    * @param value
    *          The value of the configuration parameter
-   * 
+   *
    */
-  @Override
+
   public void setProperty(String name, Object value)
       throws IllegalArgumentException
   {
@@ -153,13 +153,13 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
    * Returns the specified configuration parameter for this service provider. It
    * currently supports the {@link #PROPERTY_DOCUMENT_STYLE} configuration
    * parameter.
-   * 
+   *
    * @param name
    *          The configuration parameter to retrieve
    * @returns The configuration parameter value
-   * 
+   *
    */
-  @Override
+
   public Object getProperty(String name) throws IllegalArgumentException
   {
     if (name.equals(PROPERTY_DOCUMENT_STYLE))
@@ -174,7 +174,7 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
     }
   }
 
-  @Override
+
   public Object getPropertyDatatype(String name)
       throws IllegalArgumentException
   {
@@ -198,7 +198,7 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
     }
   }
 
-  @Override
+
   public String getPropertyHelp(String name, String locale)
       throws IllegalArgumentException
   {
