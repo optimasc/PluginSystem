@@ -90,6 +90,11 @@
 			<version>3.8.2</version>
 			<scope>test</scope>
 		</dependency>
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>plugin-spi-core</artifactId>
+         <version>0.0.1-SNAPSHOT</version>
+      </dependency>
 	</dependencies>
 
 	<dependencyManagement>
