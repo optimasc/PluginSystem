@@ -315,7 +315,7 @@ public class ServiceRegistry
    * 
    * @param category The category registry to check in.
    * @param provider The actual provider implementation
-   * @return
+   * @return true if this provider is registered in this category.
    */
   public boolean contains(Object provider, Class<?> category)
   {

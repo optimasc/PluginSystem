@@ -129,8 +129,6 @@ public class ServiceProviderUtilities
     /**
      * Instantiates a new categories map.
      * 
-     * @param registry
-     *          the registry.
      */
     public ServiceList()
     {
@@ -142,8 +140,6 @@ public class ServiceProviderUtilities
      * 
      * @param category
      *          the category.
-     * @param useOrdering
-     *          the use ordering.
      * @return the providers.
      */
     public Iterator<?> getProviders(Class<?> category)
@@ -162,8 +158,6 @@ public class ServiceProviderUtilities
      * 
      * @param category
      *          the category.
-     * @param useOrdering
-     *          the use ordering.
      * @return the providers.
      */
     public List<?> getProvidersAsList(Class<?> category)
@@ -190,8 +184,8 @@ public class ServiceProviderUtilities
      * Checks all categories and determines if this provider class is already
      * included in any of category registries.
      * 
-     * @param provider
-     * @return
+     * @param provider An instance object
+     * @return true if this provider is registered in any category.
      */
     public boolean contains(Object provider)
     {

@@ -90,13 +90,13 @@ public interface DocumentExporter extends Codec, ServiceConfiguration, ServiceMe
    */
   public static final String PROPERTY_BASE_URL = "DocumentBaseURL";
   
-  /** Document style for {@link TransformerUtils#prepare(Document, String)} method: Report type. */ 
+  /** Document style : Report type. */ 
   public static final String OUTPUT_REPORT = "report";
-  /** Document style for {@link TransformerUtils#prepare(Document, String)} method: Article type. */ 
+  /** Document style : Article type. */ 
   public static final String OUTPUT_ARTICLE = "article";
-  /** Document style for {@link TransformerUtils#prepare(Document, String)} method: Book type. */ 
+  /** Document style : Book type. */ 
   public static final String OUTPUT_BOOK = "book";
-  /** Document style for {@link TransformerUtils#prepare(Document, String)} method: Letter type. */ 
+  /** Document style : Letter type. */ 
   public static final String OUTPUT_LETTER = "letter";
   /** Returns an array of Strings containing a list of file suffixes associated 
    *  with the format that can be exported. 

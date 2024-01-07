@@ -156,7 +156,7 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
    *
    * @param name
    *          The configuration parameter to retrieve
-   * @returns The configuration parameter value
+   * @return The configuration parameter value
    *
    */
 

@@ -23,13 +23,13 @@ package org.plugin.spi;
  *  The following data types are allowed for properties:
  *  The possible datatypes that are supported are as follows:
  *  <ul>
- *   <li>{@link String} if the value of type string.</li>
- *   <li>{@link String[]} if the value must be one of the selection in this string array.</li>
- *   <li>{@link Integer} if the value must be of type integer.</li>
- *   <li>{@link Boolean} if the value must of type boolean.</li>
- *   <li>{@link Integer[]} if the value must be one of the integers defined in this string array.</li>
- *   <li>{@link URI} if the value must be of type URI (Java SE/CDC/Android only)</li>
- *   <li>{@link URL} if the value must be of type URL (Java SE/CDC/Android only)</li>
+ *   <li>{@link java.lang.String} if the value of type string.</li>
+ *   <li>String[] if the value must be one of the selection in this string array.</li>
+ *   <li>{@link java.lang.Integer} if the value must be of type integer.</li>
+ *   <li>{@link java.lang.Boolean} if the value must of type boolean.</li>
+ *   <li>Integer[] if the value must be one of the integers defined in this string array.</li>
+ *   <li>{@link java.net.URI} if the value must be of type URI (Java SE/CDC/Android only)</li>
+ *   <li>{@link java.net.URL} if the value must be of type URL (Java SE/CDC/Android only)</li>
  *  </ul>
  *  
  * 
@@ -70,18 +70,18 @@ public interface ServiceConfiguration
    *  if the value returned is an array type.
    *  
    *  The possible datatypes that are supported are as follows:
-   *  <ul>
-   *   <li>{@link String} if the value of type string.</li>
-   *   <li>{@link String[]} if the value must be one of the selection in this string array.</li>
-   *   <li>{@link Integer} if the value must be of type integer.</li>
-   *   <li>{@link Boolean} if the value must of type boolean.</li>
-   *   <li>{@link Integer[]} if the value must be one of the integers defined in this string array.</li>
-   *   <li>{@link URI} if the value must be of type URI</li>
-   *   <li>{@link URL} if the value must be of type URL</li>
-   *  </ul>
+ *  <ul>
+ *   <li>{@link java.lang.String} if the value of type string.</li>
+ *   <li>String[] if the value must be one of the selection in this string array.</li>
+ *   <li>{@link java.lang.Integer} if the value must be of type integer.</li>
+ *   <li>{@link java.lang.Boolean} if the value must of type boolean.</li>
+ *   <li>Integer[] if the value must be one of the integers defined in this string array.</li>
+ *   <li>{@link java.net.URI} if the value must be of type URI (Java SE/CDC/Android only)</li>
+ *   <li>{@link java.net.URL} if the value must be of type URL (Java SE/CDC/Android only)</li>
+ *  </ul>
    * 
    * @param name The property name that we need to return information from.
-   * @return
+   * @return The instance object representing the datatype.
    * @throws IllegalArgumentException
    */
   public Object getPropertyDatatype(String name)   throws IllegalArgumentException;

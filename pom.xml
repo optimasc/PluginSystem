@@ -4,10 +4,73 @@
                              http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     
-    <groupId>org.plugin</groupId>
-    <artifactId>parent-root</artifactId>
+    <groupId>com.optimasc.pluginsys</groupId>
+    <artifactId>plugin-parent</artifactId>
     <packaging>pom</packaging>
     <version>1.0.0</version>
+    
+    
+	<licenses>
+		<license>
+		    <!--  The license identifier, as defined by SPDX -->
+			<name>Apache-2.0</name>
+		</license>
+	</licenses>
+
+	<!-- List of direct developers for this project -->
+	<developers>
+		<developer>
+			<name>Carl Eric Codere</name>
+			<organization>Optimas SC Inc.</organization>
+			<roles>
+				<role>creator</role>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+
+	<!-- List of contributors to this project -->
+	<contributors>
+	</contributors>
+
+	<!-- List of organization associated with this project -->
+	<organization>
+		<name>Optima SC Inc.</name>
+		<url>http://www.optimasc.com</url>
+	</organization>
+
+
+	<!-- The repository locations. Private values are allowed. -->
+	<scm>
+	
+		<connection>https://github.com/optimasc/PluginSystem.git</connection>
+		<developerConnection>scm:git:ssh://github.com:optimasc/PluginSystem.git</developerConnection>
+        <url>https://github.com/optimasc/PluginSystem/tree/main</url>
+	</scm>
+
+	<!-- The location where the data will be distributed. Keep as is for Sonatype Maven central -->
+	<!-- The location where the data will be distributed -->
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+	
+	
+	<repositories>
+	    <repository>
+	      <id>snapshots</id>
+	      <name>OSSRH Public snapshot repository</name>
+	      <url>https://s01.oss.sonatype.org/content/repositories/snapshots/</url>
+	    </repository>
+  </repositories>
+
+    
     
     <modules>
         <module>plugins-spi</module>

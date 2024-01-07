@@ -35,6 +35,11 @@ public class ServiceManager extends ServiceRegistry
   protected ServiceRegistry registeredPlugins;
   protected static ServiceManager pluginManager;
   
+  /** Singleton returning the instance of the service
+   *  registry.
+   * 
+   * @return The service registry.
+   */
   public static ServiceRegistry getInstance()
   {
     if (pluginManager == null)
