@@ -12,7 +12,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package org.plugin.spi.document;
+package com.optimasc.plugin.spi.document;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -20,8 +20,9 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 
-import org.plugin.ServiceProviderException;
 import org.w3c.dom.Document;
+
+import com.optimasc.plugin.ServiceProviderException;
 
 /**
  * Base helper class used for document exporters. The document exporter class
@@ -175,23 +176,14 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
   }
 
 
-  public Object getPropertyDatatype(String name)
-      throws IllegalArgumentException
+  public Class getPropertyDatatype(String name) throws IllegalArgumentException
   {
     if (name.equals(PROPERTY_DOCUMENT_STYLE))
     {
-      return new String();
+      return String.class;
     } else if (name.equals(PROPERTY_BASE_URL))
     {
-      try
-      {
-        return new URL(".");
-      } catch (MalformedURLException e)
-      {
-        // TODO Auto-generated catch block
-        e.printStackTrace();
-        return null;
-      }
+        return URL.class;
     } else
     {
       throw new IllegalArgumentException("Unknown parameter '" + name + "'");

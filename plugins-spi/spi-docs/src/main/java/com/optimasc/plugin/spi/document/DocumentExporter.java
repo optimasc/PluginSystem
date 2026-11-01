@@ -12,12 +12,13 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 */
-package org.plugin.spi.document;
+package com.optimasc.plugin.spi.document;
 
-import org.plugin.spi.Codec;
-import org.plugin.spi.ServiceConfiguration;
-import org.plugin.spi.ServiceMetadata;
 import org.w3c.dom.Document;
+
+import com.optimasc.plugin.spi.Codec;
+import com.optimasc.plugin.spi.ServiceConfiguration;
+import com.optimasc.plugin.spi.ServiceMetadata;
 
 /** Represents a service provider interface that can be used to export XHTML DOM Documents
  *  to an output stream in a specific format.
