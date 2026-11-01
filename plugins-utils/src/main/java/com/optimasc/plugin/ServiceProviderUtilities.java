@@ -24,6 +24,8 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ import java.util.ServiceLoader;
 import java.util.Map.Entry;
 import java.util.logging.Logger;
 
+import com.optimasc.plugin.spi.ServiceConfiguration;
 import com.optimasc.plugin.spi.ServiceMetadata;
 
 import java.util.Vector;
@@ -429,109 +432,138 @@ public class ServiceProviderUtilities
   }
 
   /**
-   * Utility function for {@link com.optimasc.plugin.spi.ServiceConfiguration} to validate values against
-   * datatypes and converts to the correct datatype if necessary. Throws an
-   * exception if the value is not of the correct format.
-   * 
+   * Utility function for {@link com.optimasc.plugin.spi.ServiceConfiguration}
+   * implementations and clients to validate a value against the datatype and
+   * the permitted values of a property, converting it to the expected datatype
+   * if necessary.
+   *
+   * <p>A value that is already an instance of <code>dataType</code> is
+   * accepted as is. A {@link java.lang.String} value is converted when the
+   * expected datatype is {@link java.lang.Integer}, {@link java.lang.Boolean}
+   * (<code>"true"</code> or <code>"false"</code>, case insensitive),
+   * {@link java.net.URI} or {@link java.net.URL}. Any other value is
+   * rejected.</p>
+   *
    * @param dataType
-   *          [in] The expected datatype.
+   *          [in] The expected datatype, as returned by
+   *          {@link com.optimasc.plugin.spi.ServiceConfiguration#getPropertyDatatype(String)}.
+   *          Must not be <code>null</code>.
+   * @param allowedValues
+   *          [in] The permitted values, as returned by
+   *          {@link com.optimasc.plugin.spi.ServiceConfiguration#getPropertyAllowedValues(String)},
+   *          or <code>null</code> if the value is not restricted to a fixed set.
    * @param value
-   *          [in] The actual value
-   * @return The value converted to the expected datatype.
+   *          [in] The actual value, or <code>null</code> to unset the property.
+   * @return The value converted to the expected datatype, or <code>null</code>
+   *          if <code>value</code> is <code>null</code>.
    * @throws IllegalArgumentException
    *           In case the value cannot be converted to the expected datatype or
-   *           value is not valid.
+   *           is not one of the permitted values.
    */
-  public static Object validateValue(Object dataType, Object value) throws IllegalArgumentException
+  public static Object validateValue(Class dataType, Object[] allowedValues, Object value) throws IllegalArgumentException
   {
-    boolean valid = false;
-    /* Choice of integers */
-    if (dataType instanceof Integer[])
+    if (dataType == null)
     {
-      Integer[] intValues = (Integer[]) dataType;
-      if (value instanceof Integer)
+      throw new IllegalArgumentException("dataType must not be null");
+    }
+    if (value == null)
+    {
+      return null;
+    }
+    if (dataType.isInstance(value) == false)
+    {
+      if ((value instanceof String) == false)
       {
-      } else if (value instanceof String)
-      {
-        value = new Integer((String) value);
-      } else
-      {
-        throw new IllegalArgumentException("value must of type Integer or String");
+        throw new IllegalArgumentException("value must be of type " + dataType.getName()
+            + ", but got " + value.getClass().getName());
       }
-      for (int i = 0; i < intValues.length; i++)
+      value = convertString(dataType, (String) value);
+    }
+    if (allowedValues != null)
+    {
+      for (int i = 0; i < allowedValues.length; i++)
       {
-        if (value.equals(intValues[i]))
+        if (value.equals(allowedValues[i]))
         {
-          valid = true;
-          break;
+          return value;
         }
       }
-      if (valid == false)
-      {
-        throw new IllegalArgumentException("Invalid value of integer");
-      }
-    }
-    /* Integer */
-    if (dataType instanceof Integer)
-    {
-      if (value instanceof Integer)
-      {
-        valid = true;
-      } else if (value instanceof String)
-      {
-        value = new Integer((String) value);
-      } else
-      {
-        throw new IllegalArgumentException("value must of type Integer or String");
-      }
-    }
-    /* Choice of string values */
-    if (dataType instanceof String[])
-    {
-      String[] strValues = (String[]) dataType;
-      if (value instanceof String)
-      {
-        for (int i = 0; i < strValues.length; i++)
-        {
-          if (strValues[i].equals(value))
-          {
-            valid = true;
-            break;
-          }
-        }
-        if (valid == false)
-        {
-          throw new IllegalArgumentException("Invalid value of String.");
-        }
-
-      } else
-      {
-        throw new IllegalArgumentException("value must of type String");
-      }
-    }
-    /* A string value */
-    if (dataType instanceof String)
-    {
-      if (value instanceof String)
-      {
-        valid = true;
-      } else
-      {
-        throw new IllegalArgumentException("value must of type String");
-      }
-    }
-    /* A boolean value */
-    if (dataType instanceof Boolean)
-    {
-      if (value instanceof Boolean)
-      {
-        valid = true;
-      } else
-      {
-        throw new IllegalArgumentException("value must of type Boolean");
-      }
+      throw new IllegalArgumentException("Value '" + value + "' is not one of the permitted values");
     }
     return value;
+  }
+
+  /**
+   * Validates a value for a named property of a
+   * {@link com.optimasc.plugin.spi.ServiceConfiguration}, using the datatype and
+   * permitted values it reports for that property.
+   *
+   * @param config
+   *          [in] The service configuration that defines the property.
+   * @param name
+   *          [in] The property name.
+   * @param value
+   *          [in] The actual value, or <code>null</code> to unset the property.
+   * @return The value converted to the expected datatype.
+   * @throws IllegalArgumentException
+   *           If the property is not recognized, or the value cannot be
+   *           converted or is not permitted.
+   * @see #validateValue(Class, Object[], Object)
+   */
+  public static Object validateValue(ServiceConfiguration config, String name, Object value) throws IllegalArgumentException
+  {
+    return validateValue(config.getPropertyDatatype(name), config.getPropertyAllowedValues(name), value);
+  }
+
+  /** Converts a string to the specified datatype, throws an
+   *  IllegalArgumentException if the conversion is not supported or fails.
+   */
+  private static Object convertString(Class dataType, String value) throws IllegalArgumentException
+  {
+    if (dataType == Integer.class)
+    {
+      try
+      {
+        return Integer.valueOf(value.trim());
+      } catch (NumberFormatException e)
+      {
+        throw new IllegalArgumentException("Invalid integer value '" + value + "'");
+      }
+    }
+    if (dataType == Boolean.class)
+    {
+      String s = value.trim();
+      if (s.equalsIgnoreCase("true"))
+      {
+        return Boolean.TRUE;
+      }
+      if (s.equalsIgnoreCase("false"))
+      {
+        return Boolean.FALSE;
+      }
+      throw new IllegalArgumentException("Invalid boolean value '" + value + "'");
+    }
+    if (dataType == URI.class)
+    {
+      try
+      {
+        return new URI(value);
+      } catch (URISyntaxException e)
+      {
+        throw new IllegalArgumentException("Invalid URI value '" + value + "'");
+      }
+    }
+    if (dataType == URL.class)
+    {
+      try
+      {
+        return new URL(value);
+      } catch (MalformedURLException e)
+      {
+        throw new IllegalArgumentException("Invalid URL value '" + value + "'");
+      }
+    }
+    throw new IllegalArgumentException("value must be of type " + dataType.getName());
   }
 
   /**

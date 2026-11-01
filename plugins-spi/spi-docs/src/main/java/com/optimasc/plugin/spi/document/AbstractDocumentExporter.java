@@ -123,30 +123,58 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
 
   /**
    * Sets the specified configuration parameter for this service provider. It
-   * currently supports the {@link #PROPERTY_DOCUMENT_STYLE} configuration
-   * parameter.
+   * currently supports the {@link #PROPERTY_DOCUMENT_STYLE} and
+   * {@link #PROPERTY_BASE_URL} configuration parameters.
+   *
+   * <p>{@link #PROPERTY_DOCUMENT_STYLE} must be one of the values returned by
+   * {@link #getPropertyAllowedValues(String)}; setting it to <code>null</code>
+   * restores the default style {@link #OUTPUT_ARTICLE}.
+   * {@link #PROPERTY_BASE_URL} must be a {@link java.net.URL} or
+   * <code>null</code>.</p>
    *
    * @param name
-   *          The configuration parameter to set, should be
-   *          {@link #PROPERTY_DOCUMENT_STYLE}.
+   *          The configuration parameter to set.
    * @param value
    *          The value of the configuration parameter
-   *
+   * @throws IllegalArgumentException
+   *          If the parameter is not recognized, or the value is of the wrong
+   *          type or is not one of the permitted values.
    */
 
   public void setProperty(String name, Object value)
       throws IllegalArgumentException
   {
+    checkName(name);
     if (name.equals(PROPERTY_DOCUMENT_STYLE))
     {
-      documentStyle = value.toString();
-    } else if (name.equals(PROPERTY_BASE_URL))
+      if (value == null)
+      {
+        documentStyle = OUTPUT_ARTICLE;
+        return;
+      }
+      if ((value instanceof String) == false)
+      {
+        throw new IllegalArgumentException("Parameter '" + name
+            + "' must be of type java.lang.String");
+      }
+      Object[] allowed = getPropertyAllowedValues(name);
+      for (int i = 0; i < allowed.length; i++)
+      {
+        if (allowed[i].equals(value))
+        {
+          documentStyle = (String) value;
+          return;
+        }
+      }
+      throw new IllegalArgumentException("Unsupported document style '" + value + "'");
+    } else
     {
+      if ((value != null) && ((value instanceof URL) == false))
+      {
+        throw new IllegalArgumentException("Parameter '" + name
+            + "' must be of type java.net.URL");
+      }
       baseURL = (URL) value;
-    }
-    else
-    {
-      throw new IllegalArgumentException("Unknown parameter '" + name + "'");
     }
   }
 
@@ -163,6 +191,7 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
 
   public Object getProperty(String name) throws IllegalArgumentException
   {
+    checkName(name);
     if (name.equals(PROPERTY_DOCUMENT_STYLE))
     {
       return documentStyle;
@@ -178,6 +207,7 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
 
   public Class getPropertyDatatype(String name) throws IllegalArgumentException
   {
+    checkName(name);
     if (name.equals(PROPERTY_DOCUMENT_STYLE))
     {
       return String.class;
@@ -194,6 +224,7 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
   public String getPropertyHelp(String name, String locale)
       throws IllegalArgumentException
   {
+    checkName(name);
     if (name.equals(PROPERTY_DOCUMENT_STYLE))
     {
       return "Document style to output";
@@ -201,6 +232,47 @@ public abstract class AbstractDocumentExporter implements DocumentExporter
     {
       return "Document base location";
     } else
+    {
+      throw new IllegalArgumentException("Unknown parameter '" + name + "'");
+    }
+  }
+
+  /**
+   * Returns the permitted values of the specified configuration parameter.
+   * For {@link #PROPERTY_DOCUMENT_STYLE} this implementation returns the
+   * mandatory styles {@link #OUTPUT_ARTICLE}, {@link #OUTPUT_REPORT} and
+   * {@link #OUTPUT_BOOK}; subclasses supporting additional styles such as
+   * {@link #OUTPUT_LETTER} should override this method. Returns
+   * <code>null</code> for {@link #PROPERTY_BASE_URL}, which is unrestricted.
+   *
+   * @param name
+   *          The configuration parameter.
+   * @return The permitted values, or <code>null</code> if unrestricted.
+   * @throws IllegalArgumentException
+   *          If the parameter is not recognized.
+   */
+  public Object[] getPropertyAllowedValues(String name)
+      throws IllegalArgumentException
+  {
+    checkName(name);
+    if (name.equals(PROPERTY_DOCUMENT_STYLE))
+    {
+      return new String[] { OUTPUT_ARTICLE, OUTPUT_REPORT, OUTPUT_BOOK };
+    }
+    return null;
+  }
+
+  /** Throws an IllegalArgumentException if the parameter name is null or
+   *  not recognized by this class.
+   */
+  private static void checkName(String name) throws IllegalArgumentException
+  {
+    if (name == null)
+    {
+      throw new IllegalArgumentException("Parameter name must not be null");
+    }
+    if ((name.equals(PROPERTY_DOCUMENT_STYLE) == false)
+        && (name.equals(PROPERTY_BASE_URL) == false))
     {
       throw new IllegalArgumentException("Unknown parameter '" + name + "'");
     }
